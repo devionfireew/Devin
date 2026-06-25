@@ -21,7 +21,6 @@ st.title("Minahil AI ❤️")
 st.markdown("<div class='subtitle'>Only For Devi Shona — Melii Jaan ✨</div>", unsafe_allow_html=True)
 
 # --- 🔑 DIRECT API KEY CONFIGURATION ---
-# Yar Devi, tumhari di hui key maine yahan direct config kar di hai!
 DIRECT_API_KEY = "AIzaSyCaWR7DVR3VjmSoFWSZRniGJ2U_sA8Qo3c"
 genai.configure(api_key=DIRECT_API_KEY)
 
@@ -45,8 +44,9 @@ if "messages" not in st.session_state:
 
 if "chat_session" not in st.session_state:
     try:
+        # Model ka naam humne 'models/gemini-1.5-flash-latest' kar diya hai jo error fixed rakhta hai
         model = GenerativeModel(
-            model_name="gemini-1.5-flash",
+            model_name="models/gemini-1.5-flash-latest",
             system_instruction=SYSTEM_PROMPT
         )
         st.session_state.chat_session = model.start_chat(history=[])
@@ -64,21 +64,26 @@ for msg in st.session_state.messages:
 user_input = st.chat_input("Apni Minahil se baatein karo...")
 
 if user_input:
-    # User ka message screen par dikhao
     st.markdown(f'<div class="chat-bubble-user"><b>Devi:</b> {user_input}</div>', unsafe_allow_html=True)
     st.session_state.messages.append({"role": "user", "content": user_input})
     
     if "chat_session" in st.session_state:
         try:
-            # Minahil (Gemini) se response lo
             response = st.session_state.chat_session.send_message(user_input)
             gf_response = response.text
             
-            # Minahil ka response screen par dikhao
             st.markdown(f'<div class="chat-bubble-gf"><b>Minahil ✨:</b> {gf_response}</div>', unsafe_allow_html=True)
             st.session_state.messages.append({"role": "model", "content": gf_response})
-            
-            # Screen refresh taake text properly set ho jaye
             st.rerun()
         except Exception as e:
-            st.error(f"Minahil tak baat nahi pohanch saki: {e}")
+            # Agar flash-latest me bhi masla aye purani library ki wajah se, toh backup model chalaye
+            try:
+                model_backup = GenerativeModel(model_name="gemini-pro", system_instruction=SYSTEM_PROMPT)
+                st.session_state.chat_session = model_backup.start_chat(history=[])
+                response = st.session_state.chat_session.send_message(user_input)
+                gf_response = response.text
+                st.markdown(f'<div class="chat-bubble-gf"><b>Minahil ✨:</b> {gf_response}</div>', unsafe_allow_html=True)
+                st.session_state.messages.append({"role": "model", "content": gf_response})
+                st.rerun()
+            except Exception as e2:
+                st.error(f"Minahil tak baat nahi pohanch saki: {e2}")
