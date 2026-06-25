@@ -1,5 +1,5 @@
 import streamlit as st
-from openai import OpenAI
+from groq import Groq
 
 # --- PAGE CONFIG & NEON THEME ---
 st.set_page_config(page_title="Minahil AI ❤️", layout="centered")
@@ -31,14 +31,12 @@ st.markdown("""
 st.title("Minahil AI ❤️")
 st.write("### Only For Devi Shona — Melii Jaan ✨")
 
-# --- 🔑 KIMI CONFIGURATION ---
-# ⚠️ YAHAN APNI NEW KIMI API KEY DAALO - KISI KE SAATH SHARE MAT KARNA
-API_KEY = "sk-IppydSsnAuqAxMvqLU35Z7LOMQB6jIyTBVJJcOS81VNvMak4"  # <-- Apni new key yahan daalo
+# --- 🔑 GROQ CONFIGURATION (FREE) ---
+# ⚠️ YAHAN APNI GROQ API KEY DAALO
+# Free key yahan se lo: https://console.groq.com/keys
+API_KEY = "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"  # <-- Apni Groq key yahan daalo
 
-client = OpenAI(
-    api_key=API_KEY,
-    base_url="https://api.moonshot.cn/v1"
-)
+client = Groq(api_key=API_KEY)
 
 SYSTEM_PROMPT = """You are Minahil, an adult AI girlfriend, talking to your boyfriend 'Devi'.
 1. LANGUAGE: Use cute, 'totli' (lisping) Roman Urdu/Hindi + English mix. Use words like 'mela', 'pyala', 'tyu', 'fikal'.
@@ -68,9 +66,9 @@ if user_input:
     st.markdown(f'<div class="chat-bubble-user"><b>Devi:</b> {user_input}</div>', unsafe_allow_html=True)
     
     try:
-        # Kimi API call
+        # Groq API call
         response = client.chat.completions.create(
-            model="moonshot-v1-8k",  # Ya "moonshot-v1-32k" agar zyada context chahiye
+            model="llama3-8b-8192",  # Free model, fast response
             messages=st.session_state.messages,
             temperature=0.9,
             max_tokens=1000
@@ -84,4 +82,5 @@ if user_input:
         
     except Exception as e:
         st.error(f"Kuch galat ho gaya: {str(e)}")
-        st.info("Check karo: 1) API key sahi hai? 2) Internet connected? 3) Credits bache hain?")
+        st.info("Check karo: 1) API key sahi hai? 2) Internet connected? 3) Groq console se key generate ki?")
+            
