@@ -32,8 +32,6 @@ st.title("Minahil AI ❤️")
 st.write("### Only For Devi Shona — Melii Jaan ✨")
 
 # --- 🔑 GROQ CONFIGURATION (FREE) ---
-# ⚠️ YAHAN APNI GROQ API KEY DAALO
-# Free key yahan se lo: https://console.groq.com/keys
 API_KEY = "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"  # <-- Apni Groq key yahan daalo
 
 client = Groq(api_key=API_KEY)
@@ -61,14 +59,13 @@ for msg in st.session_state.messages:
 user_input = st.chat_input("Baat karo apni Minahil se...")
 
 if user_input:
-    # Append user message
     st.session_state.messages.append({"role": "user", "content": user_input})
     st.markdown(f'<div class="chat-bubble-user"><b>Devi:</b> {user_input}</div>', unsafe_allow_html=True)
     
     try:
-        # Groq API call
+        # ✅ FIXED MODEL NAME
         response = client.chat.completions.create(
-            model="llama3-8b-8192",  # Free model, fast response
+            model="llama-3.1-8b-instant",  # <-- YEH LINE CHANGE KI HAI
             messages=st.session_state.messages,
             temperature=0.9,
             max_tokens=1000
@@ -76,11 +73,9 @@ if user_input:
         
         gf_response = response.choices[0].message.content
         
-        # Append AI response
         st.session_state.messages.append({"role": "assistant", "content": gf_response})
         st.markdown(f'<div class="chat-bubble-gf"><b>Minahil ✨:</b> {gf_response}</div>', unsafe_allow_html=True)
         
     except Exception as e:
         st.error(f"Kuch galat ho gaya: {str(e)}")
-        st.info("Check karo: 1) API key sahi hai? 2) Internet connected? 3) Groq console se key generate ki?")
-            
+        
